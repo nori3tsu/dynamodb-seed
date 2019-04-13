@@ -50,7 +50,7 @@ const run = async () => {
 
       console.log(file);
 
-      const seeds = yaml.safeLoad(fs.readFileSync(file, "utf8"));
+      const seeds = yaml.safeLoad(fs.readFileSync(file, "utf8"))['Seeds'];
       await seeds.map(async ({ TableName, Items }) => {
         const tableName = [
           program.prefix,

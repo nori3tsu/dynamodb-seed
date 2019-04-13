@@ -5,7 +5,7 @@ This is a cli library that handling seed data for DynamoDB.
 ## YAML format
 
 ```
----
+Seeds:
   -
     TableName: "TableA"
     Items:

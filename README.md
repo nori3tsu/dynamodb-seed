@@ -67,9 +67,9 @@ Usage: dynamodb-seed --debug
 
 Options:
   -f, --file <value>    Required: seed files using glob pattern
-  --region <value>      DynamoDB region (default: "ap-northeast-1")
   -p, --prefix <value>  a table prefix
   -s, --suffix <value>  a table suffix
+  --region <value>      DynamoDB region (default: "ap-northeast-1")
   --endpoint <value>    DynamoDB endpoint
   --profile <value>     an AWS profile name
   --debug               output debug logs

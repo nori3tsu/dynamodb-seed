@@ -2,6 +2,32 @@
 
 This is a cli library that handling seed data for DynamoDB.
 
+## Installation
+
+install packages globally
+
+```
+$ npm i -g dynamodb-seed
+```
+
+and exexute below
+
+```
+$ dynamodb --help
+```
+
+or install package locally
+
+```
+$ npm i dynamodb-seed
+```
+
+and execute below
+
+```
+$ npx dynamodb-seed --help
+```
+
 ## YAML format
 
 ```
@@ -49,3 +75,8 @@ Options:
   --debug               output debug logs
   -h, --help            output usage information
 ```
+
+## TODO
+
+* Use batchWriteItem
+

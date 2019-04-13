@@ -1,7 +1,8 @@
 {
   "name": "dynamodb-seed",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "This is a cli library that handling seed data for DynamoDB.",
+  "repository": "https://github.com/nori3tsu/dynamodb-seed",
   "bin": {
     "dynamodb-seed": "bin/dynamodb-seed.js"
   },

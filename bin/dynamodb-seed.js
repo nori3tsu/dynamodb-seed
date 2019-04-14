@@ -67,10 +67,12 @@ const run = async () => {
           await client.put(params).promise();
         })).catch((err) => {
           console.log(`Failed to load items - ${err.message}`);
+          process.exit(1);
         });
       });
     } catch (err) {
       console.log(`Faild to parse ${file} - ${err.message}`)
+      process.exit(1);
     }
   });
 }

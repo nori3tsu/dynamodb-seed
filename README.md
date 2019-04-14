@@ -59,7 +59,7 @@ load files
 $ dynamodb-seed -f './**/*.yaml'
 
 load files in some directory
-$ dynamodb-seed -f './!(default|development)/*.yaml'
+$ dynamodb-seed -f './+(default|development)/*.yaml'
 ```
 
 Learn more about the file options glob pattern [here](https://www.npmjs.com/package/glob).

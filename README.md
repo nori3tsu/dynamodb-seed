@@ -53,11 +53,16 @@ Seeds:
 
 ```
 load a file
-$ dynamodb-seed -f ./seed.yaml
+$ dynamodb-seed -f './seed.yaml'
 
 load files
-$ dynamodb-seed -f ./**/*.yaml
+$ dynamodb-seed -f './**/*.yaml'
+
+load files in some directory
+$ dynamodb-seed -f './!(default|development)/*.yaml'
 ```
+
+Learn more about the file options glob pattern [here](https://www.npmjs.com/package/glob).
 
 ## Options
 

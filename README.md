@@ -34,7 +34,7 @@ $ npx dynamodb-seed --help
 Seeds:
   -
     TableName: "Products" # required
-    Keys:                 # required
+    Key:                  # required
       - id
     NotUpdateAttributes:  # optional: not update this attributes if an item exists
       - stock
@@ -49,7 +49,7 @@ Seeds:
         stock: 0
   -
     TableName: "Shops"
-    Keys:
+    Key:
       - id
     Items:
       -

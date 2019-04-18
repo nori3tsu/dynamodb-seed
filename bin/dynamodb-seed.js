@@ -26,14 +26,14 @@ program
   .option("--debug", "output debug logs")
   .parse(process.argv);
 
-const validate = ({ TableName, Keys, NotUpdateAttributes, Items}) => {
+const validate = ({ TableName, Key, NotUpdateAttributes, Items}) => {
   if (!TableName) {
     console.log("TableName is required.");
     process.exit(1);
   }
 
-  if (_.isEmpty(Keys)) {
-    console.log(`${TableName}: Keys is required.`);
+  if (_.isEmpty(Key)) {
+    console.log(`${TableName}: Key is required.`);
     process.exit(1);
   }
 
@@ -84,8 +84,8 @@ const run = async () => {
       console.log(file);
 
       const seeds = yaml.safeLoad(fs.readFileSync(file, "utf8"))['Seeds'];
-      await seeds.map(async ({ TableName, Keys, NotUpdateAttributes = [], Items }) => {
-        validate({TableName, Keys, NotUpdateAttributes, Items});
+      await seeds.map(async ({ TableName, Key, NotUpdateAttributes = [], Items }) => {
+        validate({TableName, Key, NotUpdateAttributes, Items});
 
         const tableName = [
           program.prefix,
@@ -97,7 +97,7 @@ const run = async () => {
 
         return Promise.all(Items.map(async (Item) => {
           return withRetry(async () => {
-            const data = await client.get({TableName: tableName, Key: _.pick(Item, Keys)}).promise();
+            const data = await client.get({TableName: tableName, Key: _.pick(Item, Key)}).promise();
             const currentItem = data.Item;
             if (!currentItem) {
               const params = { TableName: tableName, Item };

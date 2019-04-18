@@ -26,6 +26,23 @@ program
   .option("--debug", "output debug logs")
   .parse(process.argv);
 
+const validate = ({ TableName, Keys, NotUpdateAttributes, Items}) => {
+  if (!TableName) {
+    console.log("TableName is required.");
+    process.exit(1);
+  }
+
+  if (_.isEmpty(Keys)) {
+    console.log(`${TableName}: Keys is required.`);
+    process.exit(1);
+  }
+
+  if (_.isEmpty(Items)) {
+    console.log(`${TableName}: Items is required.`);
+    process.exit(1);
+  }
+}
+
 const withRetry = (fn) => {
   const operation = retry.operation({ retries: 10 });
   return operation.attempt(async (currentAttempt) => {
@@ -68,6 +85,8 @@ const run = async () => {
 
       const seeds = yaml.safeLoad(fs.readFileSync(file, "utf8"))['Seeds'];
       await seeds.map(async ({ TableName, Keys, NotUpdateAttributes = [], Items }) => {
+        validate({TableName, Keys, NotUpdateAttributes, Items});
+
         const tableName = [
           program.prefix,
           TableName,

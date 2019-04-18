@@ -6,6 +6,8 @@ const yaml = require('js-yaml');
 const glob = require('glob-promise');
 const program = require("commander");
 const AWS = require("aws-sdk");
+const _ = require("lodash");
+const retry = require("retry");
 
 program
   .usage("-f file")
@@ -23,6 +25,20 @@ program
   .usage("--debug")
   .option("--debug", "output debug logs")
   .parse(process.argv);
+
+const withRetry = (fn) => {
+  const operation = retry.operation({ retries: 10 });
+  return operation.attempt(async (currentAttempt) => {
+    try {
+      await fn();
+    } catch (err) {
+      console.log(`retry: ${err.message}`);
+      if (operation.retry(err)) {
+        return;
+      }
+    }
+  });
+};
 
 const run = async () => {
   if (!program.file) {
@@ -51,7 +67,7 @@ const run = async () => {
       console.log(file);
 
       const seeds = yaml.safeLoad(fs.readFileSync(file, "utf8"))['Seeds'];
-      await seeds.map(async ({ TableName, Items }) => {
+      await seeds.map(async ({ TableName, Keys, NotUpdateAttributes = [], Items }) => {
         const tableName = [
           program.prefix,
           TableName,
@@ -61,10 +77,38 @@ const run = async () => {
         console.log(`Load ${Items.length} items into the ${tableName}.`)
 
         return Promise.all(Items.map(async (Item) => {
-          const params = { TableName: tableName, Item };
+          return withRetry(async () => {
+            const data = await client.get({TableName: tableName, Key: _.pick(Item, Keys)}).promise();
+            const currentItem = data.Item;
+            if (!currentItem) {
+              const params = { TableName: tableName, Item };
+              if (program.debug) {
+                console.log("New item:")
+                console.log(params);
+              }
 
-          if (program.debug) console.log(params);
-          await client.put(params).promise();
+              return await client.put(params).promise();
+            }
+
+            const params = {
+              TableName: tableName,
+              Item: Object.assign({}, currentItem, _.omit(Item, NotUpdateAttributes)),
+            };
+
+            if (!_.isEmpty(NotUpdateAttributes)) {
+              params.Expected = {};
+              NotUpdateAttributes.forEach((attribute) => {
+                params.Expected[attribute] = { Value: currentItem[attribute] }
+              });
+            }
+
+            if (program.debug) {
+              console.log("Existed item:")
+              console.log(params);
+            }
+
+            return await client.put(params).promise();
+          });
         })).catch((err) => {
           console.log(`Failed to load items - ${err.message}`);
           process.exit(1);

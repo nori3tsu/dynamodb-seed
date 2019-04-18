@@ -33,8 +33,12 @@ $ npx dynamodb-seed --help
 ```
 Seeds:
   -
-    TableName: "TableA"
-    Items:
+    TableName: "TableA"  # required
+    Keys:                # required
+      - hashKey
+      - rangeKey
+    NotUpdateAttributes: # optional: not update this attributes if an item exists
+    Items:               # required
       -
         id: "0001"
         value: "0001"
